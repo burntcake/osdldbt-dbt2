@@ -545,14 +545,6 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-if [ "x${DB_COMMAND}" = "x" ]; then
-	eval dbt2-${DBMS}-start-db ${DB_PARAMS_ARG} ${MISC_ARG} \
-			-o ${DB_OUTPUT_DIR} || exit 1
-else
-	${DB_COMMAND} "dbt2-${DBMS}-start-db ${DB_PARAMS_ARG} ${MISC_ARG} \
-			-o ${DB_OUTPUT_DIR}" || exit 1
-fi
-
 #
 # Redisplay the test parameters.
 #
@@ -780,11 +772,6 @@ echo "Stage 3. Processing of results..."
 echo "Killing client..."
 killall dbt2-client dbt2-driver 2> /dev/null
 
-if [ "x${DB_COMMAND}" = "x" ]; then
-	dbt2-${DBMS}-stop-db ${MISC_ARG}
-else
-	${DB_COMMAND} "dbt2-${DBMS}-stop-db ${MISC_ARG}"
-fi
 if [ ${DBMS} = "pgsql" ]; then
 	if [ ${USE_PGPOOL} -eq 1 ]; then
 		pgpool -f ${DIR}/pgsql/pgpool.conf stop
