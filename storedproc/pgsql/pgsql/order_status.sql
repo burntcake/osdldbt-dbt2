@@ -69,7 +69,5 @@ BEGIN
 	LOOP
 		RETURN NEXT ol;
 	END LOOP;
-
-	RETURN null;
 END;
 ' LANGUAGE 'plpgsql';
