@@ -81,7 +81,7 @@ dbt2-datagen --direct -w ${WAREHOUSES} --pgsql || exit 1
 dbt2-pgsql-create-indexes ${PORTARG} ${TABLESPACES_FLAG} || exit 1
 
 # load C or pl/pgsql implementation of the stored procedures
-if true; then
+if false; then
 	dbt2-pgsql-load-stored-procs ${PORTARG} -t c || exit 1
 else
 	dbt2-pgsql-load-stored-procs ${PORTARG} -t plpgsql || exit 1
