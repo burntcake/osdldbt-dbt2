@@ -177,7 +177,7 @@ int init_common()
 	{
 		a_string_char[j++] = (char) i;
 	}
-#if defined(LIBDRIZZLE)
+#if defined(LIBDRIZZLE) || defined(UTF8_ONLY)
 	/*
 	 * FIXME: This is not to spec but drizzle only accepts valid UTF8
 	 * characters

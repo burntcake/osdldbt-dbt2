@@ -108,6 +108,7 @@
 #define CLIENT_PID_FILENAME "dbt2_client.pid"
 #define DRIVER_PID_FILENAME "dbt2_driver.pid"
 
+#define UTF8_ONLY
 
 struct table_cardinality_t {
 	int warehouses;
