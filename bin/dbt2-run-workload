@@ -709,10 +709,6 @@ while [ ${END} -lt ${WAREHOUSES} ]; do
 			${DRIVER_OUTPUT_DIR}/`hostname`/driver-${SEG}.txt 2>&1 || exit 1&
 done
 
-echo -n "estimated rampup time: "
-do_sleep $SLEEP_RAMPUP
-echo "estimated rampup time has elapsed"
-
 # Clear the readprofile data after the driver ramps up.
 if [ -f "/proc/profile" ]; then
 	readprofile_clear
