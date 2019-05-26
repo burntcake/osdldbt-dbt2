@@ -6,25 +6,32 @@
  *
  * Based on TPC-C Standard Specification Revision 5.0 Clause 2.8.2.
  */
-CREATE OR REPLACE FUNCTION new_order (TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) RETURNS INTEGER AS '
+CREATE TYPE new_order_info
+AS (ol_i_id INTEGER, ol_supply_w_id INTEGER, ol_quantity INTEGER);
+
+CREATE OR REPLACE FUNCTION new_order (INTEGER, INTEGER, INTEGER, INTEGER, INTEGER, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info, new_order_info) RETURNS INTEGER AS '
 DECLARE
-	/* Please someone find a better way to do this... 16 arguments max? */
-	in_data ALIAS FOR $1;
-	in_row1 ALIAS FOR $2;
-	in_row2 ALIAS FOR $3;
-	in_row3 ALIAS FOR $4;
-	in_row4 ALIAS FOR $5;
-	in_row5 ALIAS FOR $6;
-	in_row6 ALIAS FOR $7;
-	in_row7 ALIAS FOR $8;
-	in_row8 ALIAS FOR $9;
-	in_row9 ALIAS FOR $10;
-	in_row10 ALIAS FOR $11;
-	in_row11 ALIAS FOR $12;
-	in_row12 ALIAS FOR $13;
-	in_row13 ALIAS FOR $14;
-	in_row14 ALIAS FOR $15;
-	in_row15 ALIAS FOR $16;
+	tmp_w_id ALIAS FOR $1;
+	tmp_d_id ALIAS FOR $2;
+	tmp_c_id ALIAS FOR $3;
+	tmp_o_all_local ALIAS FOR $4;
+	tmp_o_ol_cnt ALIAS FOR $5;
+
+	in_row1 ALIAS FOR $6;
+	in_row2 ALIAS FOR $7;
+	in_row3 ALIAS FOR $8;
+	in_row4 ALIAS FOR $9;
+	in_row5 ALIAS FOR $10;
+	in_row6 ALIAS FOR $11;
+	in_row7 ALIAS FOR $12;
+	in_row8 ALIAS FOR $13;
+	in_row9 ALIAS FOR $14;
+	in_row10 ALIAS FOR $15;
+	in_row11 ALIAS FOR $16;
+	in_row12 ALIAS FOR $17;
+	in_row13 ALIAS FOR $18;
+	in_row14 ALIAS FOR $19;
+	in_row15 ALIAS FOR $20;
 
 	out_w_tax NUMERIC;
 
@@ -34,15 +41,6 @@ DECLARE
 	out_c_discount NUMERIC;
 	out_c_last VARCHAR;
 	out_c_credit VARCHAR;
-
-	tmp_w_id INTEGER;
-
-	tmp_d_id INTEGER;
-
-	tmp_c_id INTEGER;
-
-	tmp_o_all_local INTEGER;
-	tmp_o_ol_cnt INTEGER;
 
 	tmp_i_id INTEGER;
 	tmp_i_price NUMERIC;
@@ -57,18 +55,6 @@ DECLARE
 
 	tmp_total_amount NUMERIC;
 BEGIN
-	/* Fancy pants fixed width parsing. */
-	SELECT cast(substring(in_data FROM 1 FOR 9) AS INTEGER)
-	INTO tmp_w_id;
-	SELECT cast(substring(in_data FROM 10 FOR 2) AS INTEGER)
-	INTO tmp_d_id;
-	SELECT cast(substring(in_data FROM 12 FOR 5) AS INTEGER)
-	INTO tmp_c_id;
-	SELECT cast(substring(in_data FROM 17 FOR 1) AS INTEGER)
-	INTO tmp_o_all_local;
-	SELECT cast(substring(in_data FROM 18 FOR 2) AS INTEGER)
-	INTO tmp_o_ol_cnt;
-
 	SELECT w_tax
 	INTO out_w_tax
 	FROM warehouse
@@ -104,11 +90,11 @@ BEGIN
 
 	/* More goofy logic. :( */
 	IF tmp_o_ol_cnt > 0 THEN
-		SELECT cast(substring(in_row1 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row1.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row1 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row1.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row1 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row1.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -129,11 +115,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 1 THEN
-		SELECT cast(substring(in_row2 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row2.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row2 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row2.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row2 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row2.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -154,11 +140,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 2 THEN
-		SELECT cast(substring(in_row3 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row3.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row3 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row3.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row3 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row3.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -179,11 +165,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 3 THEN
-		SELECT cast(substring(in_row4 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row4.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row4 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row4.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row4 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row4.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -204,11 +190,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 4 THEN
-		SELECT cast(substring(in_row5 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row5.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row5 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row5.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row5 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row5.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -229,11 +215,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 5 THEN
-		SELECT cast(substring(in_row6 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row6.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row6 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row6.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row6 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row6.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -254,11 +240,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 6 THEN
-		SELECT cast(substring(in_row7 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row7.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row7 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row7.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row7 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row7.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -279,11 +265,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 7 THEN
-		SELECT cast(substring(in_row8 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row8.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row8 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row8.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row8 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row8.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -304,11 +290,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 8 THEN
-		SELECT cast(substring(in_row9 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row9.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row9 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row9.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row9 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row9.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -329,11 +315,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 9 THEN
-		SELECT cast(substring(in_row10 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row10.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row10 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row10.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row10 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row10.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -354,11 +340,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 10 THEN
-		SELECT cast(substring(in_row11 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row11.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row11 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row11.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row11 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row11.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -379,11 +365,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 11 THEN
-		SELECT cast(substring(in_row12 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row12.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row12 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row12.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row12 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row12.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -404,11 +390,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 12 THEN
-		SELECT cast(substring(in_row13 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row13.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row13 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row13.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row13 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row13.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -429,11 +415,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 13 THEN
-		SELECT cast(substring(in_row14 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row14.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row14 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row14.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row14 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row14.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
@@ -454,11 +440,11 @@ BEGIN
 			RETURN 1;
 		END IF;
 	ELSIF tmp_o_ol_cnt > 14 THEN
-		SELECT cast(substring(in_row15 FROM 1 FOR 6) AS INTEGER)
+		SELECT in_row15.ol_i_id
 		INTO tmp_i_id;
-		SELECT cast(substring(in_row15 FROM 7 FOR 9) AS INTEGER)
+		SELECT in_row15.ol_supply_w_id
 		INTO tmp_ol_supply_w_id;
-		SELECT cast(substring(in_row15 FROM 16 FOR 2) AS INTEGER)
+		SELECT in_row15.ol_quantity
 		INTO tmp_ol_quantity;
 
 		SELECT i_price, i_name, i_data
