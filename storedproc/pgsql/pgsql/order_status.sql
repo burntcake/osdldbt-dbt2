@@ -6,7 +6,23 @@
  *
  * Based on TPC-C Standard Specification Revision 5.0 Clause 2.6.2.
  */
-CREATE OR REPLACE FUNCTION order_status (INTEGER, INTEGER, INTEGER, TEXT) RETURNS SETOF record AS '
+CREATE TYPE ol_rec_type AS
+(out_c_id INTEGER,
+ out_c_first VARCHAR,
+ out_c_middle VARCHAR,
+ out_c_last VARCHAR,
+ out_c_balance NUMERIC,
+ out_o_id INTEGER,
+ out_o_carrier_id INTEGER,
+ out_o_entry_d VARCHAR,
+ out_o_ol_cnt INTEGER,
+ ol_i_id INTEGER,
+ ol_supply_w_id INTEGER,
+ ol_quantity REAL,
+ ol_amount REAL,
+ ol_delivery_d TIMESTAMP WITHOUT TIME ZONE);
+
+CREATE OR REPLACE FUNCTION order_status (INTEGER, INTEGER, INTEGER, TEXT) RETURNS SETOF ol_rec_type AS '
 DECLARE
 	in_c_id ALIAS FOR $1;
 	in_c_w_id ALIAS FOR $2;
